@@ -1,17 +1,13 @@
 package config
 
 import (
-	"database/sql"
-	"encoding/json"
-	"fmt"
-	"log"
-	"os"
-
 	"github.com/joho/godotenv" // package used to read the .env file
 	_ "github.com/lib/pq"      // postgres golang driver
+	"go-crud-book-api-postgres/db/postgres"
+	"log"
 )
 
-func CreateConnection() *sql.DB {
+func Initialize() {
 	// load .env file
 	err := godotenv.Load(".env")
 
@@ -19,40 +15,5 @@ func CreateConnection() *sql.DB {
 		log.Fatalf("Error loading .env file")
 	}
 
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
-
-	if err != nil {
-		panic(err)
-	}
-
-	// check the connection
-	err = db.Ping()
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("Connected to DB!")
-	// return the connection
-	return db
-}
-
-type NullString struct {
-	sql.NullString
-}
-
-func (s NullString) MarshalJSON() ([]byte, error) {
-	if !s.Valid {
-		return []byte("null"), nil
-	}
-	return json.Marshal(s.String)
-}
-
-func (s *NullString) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		s.String, s.Valid = "", false
-		return nil
-	}
-	s.String, s.Valid = string(data), true
-	return nil
+	postgres.CreateConnection()
 }

@@ -3,23 +3,23 @@ package models
 import (
 	"database/sql"
 	"fmt"
-	"go-crud-book-api-postgres/config"
+	"go-crud-book-api-postgres/db/postgres"
 	"log"
+	"time"
 )
 
 type Book struct {
-	ID          int64  `json:"id"`
-	Title       string `json:"title"`
-	Author      string `json:"author"`
-	PublishedAt string `json:"published_at"`
+	ID          int64     `json:"id"`
+	Title       string    `json:"title"`
+	Author      string    `json:"author"`
+	PublishedAt time.Time `json:"published_at"`
 }
 
 func AddNewBook(book Book) int64 {
-	db := config.CreateConnection()
-
+	db := postgres.CreateConnection()
 	defer db.Close()
 
-	sqlStatement := `INSERT INTO buku (title, author, published_at) VALUES ($1, $2, $3) RETURNING id`
+	sqlStatement := `INSERT INTO book (title, author, published_at) VALUES ($1, $2, $3) RETURNING id`
 
 	var id int64
 
@@ -35,8 +35,7 @@ func AddNewBook(book Book) int64 {
 }
 
 func GetAllBooks() ([]Book, error) {
-	db := config.CreateConnection()
-
+	db := postgres.CreateConnection()
 	defer db.Close()
 
 	var books []Book
@@ -68,8 +67,7 @@ func GetAllBooks() ([]Book, error) {
 }
 
 func GetBookByID(id int64) (Book, error) {
-	db := config.CreateConnection()
-
+	db := postgres.CreateConnection()
 	defer db.Close()
 
 	var book Book
@@ -94,11 +92,10 @@ func GetBookByID(id int64) (Book, error) {
 }
 
 func UpdateBook(id int64, book Book) int64 {
-	db := config.CreateConnection()
-
+	db := postgres.CreateConnection()
 	defer db.Close()
 
-	sqlStatement := `UPDATE book SET title=$2, author=$3, publishedat=$4 WHERE id=$1`
+	sqlStatement := `UPDATE book SET title=$2, author=$3, published_at=$4 WHERE id=$1`
 
 	res, err := db.Exec(sqlStatement, id, book.Title, book.Author, book.PublishedAt)
 
@@ -118,8 +115,7 @@ func UpdateBook(id int64, book Book) int64 {
 }
 
 func DeleteBook(id int64) int64 {
-	db := config.CreateConnection()
-
+	db := postgres.CreateConnection()
 	defer db.Close()
 
 	sqlStatement := `DELETE FROM book WHERE id=$1`
