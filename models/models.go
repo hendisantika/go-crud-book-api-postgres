@@ -92,3 +92,27 @@ func GetBookByID(id int64) (Book, error) {
 
 	return book, err
 }
+
+func UpdateBook(id int64, book Book) int64 {
+	db := config.CreateConnection()
+
+	defer db.Close()
+
+	sqlStatement := `UPDATE book SET title=$2, author=$3, publishedat=$4 WHERE id=$1`
+
+	res, err := db.Exec(sqlStatement, id, book.Title, book.Author, book.PublishedAt)
+
+	if err != nil {
+		log.Fatalf("Cannot execute query. %v", err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Fatalf("Error when check rows/data. %v", err)
+	}
+
+	fmt.Printf("Total updated rows/record  %v\n", rowsAffected)
+
+	return rowsAffected
+}
