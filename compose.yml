@@ -1,0 +1,27 @@
+services:
+  pgAdmin:
+    restart: always
+    image: dpage/pgadmin4
+    ports:
+      - "8000:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@yopmail.com
+      PGADMIN_DEFAULT_PASSWORD: S3cret
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+  postgres:
+    restart: always
+    image: postgres:16.4-alpine3.20
+    container_name: "postgres_container"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: S3cret
+      POSTGRES_DB: bookDB
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - ./book.sql:/docker-entrypoint-initdb.d/book.sql
+volumes:
+  pg_data:
+  pgadmin:
