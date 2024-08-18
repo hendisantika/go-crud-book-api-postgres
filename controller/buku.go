@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"go-crud-book-api-postgres/models"
 	"log"
@@ -74,4 +75,33 @@ func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 	response.Data = books
 
 	json.NewEncoder(w).Encode(response)
+}
+
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	id, err := strconv.Atoi(params["id"])
+
+	if err != nil {
+		log.Fatalf("Cannot convert string to int.  %v", err)
+	}
+
+	var buku models.Book
+
+	err = json.NewDecoder(r.Body).Decode(&buku)
+
+	if err != nil {
+		log.Fatalf("Tidak bisa decode request body.  %v", err)
+	}
+
+	updatedRows := models.UpdateBook(int64(id), buku)
+
+	msg := fmt.Sprintf("Book has been updated. Update %v rows/record", updatedRows)
+
+	res := response{
+		ID:      int64(id),
+		Message: msg,
+	}
+
+	json.NewEncoder(w).Encode(res)
 }
