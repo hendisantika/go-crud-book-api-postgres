@@ -58,3 +58,20 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(buku)
 }
+
+func GetAllBooks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	books, err := models.GetAllBooks()
+
+	if err != nil {
+		log.Fatalf("Cannot get data. %v", err)
+	}
+
+	var response Response
+	response.Status = 1
+	response.Message = "Success"
+	response.Data = books
+
+	json.NewEncoder(w).Encode(response)
+}
