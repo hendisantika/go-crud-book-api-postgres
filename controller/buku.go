@@ -22,6 +22,7 @@ type Response struct {
 }
 
 func AddNewBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/json")
 	var book models.Book
 
 	err := json.NewDecoder(r.Body).Decode(&book)
@@ -41,7 +42,8 @@ func AddNewBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetBookByID(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	//w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Context-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 
@@ -61,7 +63,8 @@ func GetBookByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllBooks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	//w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Context-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	books, err := models.GetAllBooks()
 
@@ -78,6 +81,7 @@ func GetAllBooks(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/json")
 	params := mux.Vars(r)
 
 	id, err := strconv.Atoi(params["id"])
@@ -107,6 +111,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Context-Type", "application/json")
 	params := mux.Vars(r)
 
 	id, err := strconv.Atoi(params["id"])
