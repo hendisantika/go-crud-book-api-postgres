@@ -105,3 +105,24 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(res)
 }
+
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	id, err := strconv.Atoi(params["id"])
+
+	if err != nil {
+		log.Fatalf("Cannot convert from string to int.  %v", err)
+	}
+
+	deletedRows := models.DeleteBook(int64(id))
+
+	msg := fmt.Sprintf("Book deleted successfully. Total deleted data %v", deletedRows)
+
+	res := response{
+		ID:      int64(id),
+		Message: msg,
+	}
+
+	json.NewEncoder(w).Encode(res)
+}
