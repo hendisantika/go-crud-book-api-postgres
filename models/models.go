@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"go-crud-book-api-postgres/config"
 	"log"
@@ -64,4 +65,30 @@ func GetAllBooks() ([]Book, error) {
 	}
 
 	return books, err
+}
+
+func GetBookByID(id int64) (Book, error) {
+	db := config.CreateConnection()
+
+	defer db.Close()
+
+	var book Book
+
+	sqlStatement := `SELECT * FROM book WHERE id=$1`
+
+	row := db.QueryRow(sqlStatement, id)
+
+	err := row.Scan(&book.ID, &book.Title, &book.Author, &book.PublishedAt)
+
+	switch err {
+	case sql.ErrNoRows:
+		fmt.Println("Data not found!")
+		return book, nil
+	case nil:
+		return book, nil
+	default:
+		log.Fatalf("Can not get data. %v", err)
+	}
+
+	return book, err
 }
