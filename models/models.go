@@ -116,3 +116,27 @@ func UpdateBook(id int64, book Book) int64 {
 
 	return rowsAffected
 }
+
+func DeleteBook(id int64) int64 {
+	db := config.CreateConnection()
+
+	defer db.Close()
+
+	sqlStatement := `DELETE FROM book WHERE id=$1`
+
+	res, err := db.Exec(sqlStatement, id)
+
+	if err != nil {
+		log.Fatalf("Cannot execute query. %v", err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Fatalf("Data not found. %v", err)
+	}
+
+	fmt.Printf("Total deleted data %v", rowsAffected)
+
+	return rowsAffected
+}
