@@ -32,3 +32,36 @@ func AddNewBook(book Book) int64 {
 
 	return id
 }
+
+func GetAllBooks() ([]Book, error) {
+	db := config.CreateConnection()
+
+	defer db.Close()
+
+	var books []Book
+
+	sqlStatement := `SELECT * FROM book`
+
+	rows, err := db.Query(sqlStatement)
+
+	if err != nil {
+		log.Fatalf("Cannot execute query. %v", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var book Book
+
+		err = rows.Scan(&book.ID, &book.Title, &book.Author, &book.PublishedAt)
+
+		if err != nil {
+			log.Fatalf("Cannot get data. %v", err)
+		}
+
+		books = append(books, book)
+
+	}
+
+	return books, err
+}
